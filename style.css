@@ -10,6 +10,8 @@
     --shadow-color: rgba(0, 255, 0, 0.3);
     --modal-bg: rgba(0, 0, 0, 0.95);
     --transition-speed: 0.3s;
+    --button-glow: 0 0 10px var(--primary-color);
+    --neon-border: 1px solid var(--primary-color);
 }
 
 /* إعادة تعيين عامة */
@@ -35,14 +37,11 @@ body {
 
 /* حاوية اللعبة */
 #game-container {
-    width: 100vmin;
-    height: 177.78vmin; /* نسبة 9:16 */
-    max-height: 100vh;
-    max-width: 56.25vh; /* نسبة 9:16 */
+    width: 100vw;
+    height: 100vh;
     position: relative;
     overflow: hidden;
     background-color: var(--bg-dark);
-    box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
 }
 
 /* الشاشات */
@@ -142,13 +141,137 @@ body {
     color: var(--text-light);
 }
 
-/* شريط الحالة */
-#game-hud {
+/* أزرار التحكم المحمول */
+.mobile-controls {
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.mobile-controls > * {
+    pointer-events: auto;
+}
+
+.direction-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 8px;
+    width: min(40vw, 200px);
+    height: min(40vw, 200px);
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    padding: 10px;
+    backdrop-filter: blur(5px);
+}
+
+.direction-button {
+    background: rgba(0, 255, 0, 0.1);
+    border: var(--neon-border);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(16px, 4vw, 24px);
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--button-glow);
+    position: relative;
+    overflow: hidden;
+}
+
+.direction-button::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(0, 255, 0, 0.1) 0%, transparent 70%);
+    transform: scale(0);
+    transition: transform 0.3s ease-out;
+}
+
+.direction-button:active::before {
+    transform: scale(1);
+}
+
+.direction-button:active {
+    background: rgba(0, 255, 0, 0.3);
+    transform: scale(0.95);
+    box-shadow: 0 0 20px var(--primary-color);
+}
+
+.direction-button.up { grid-column: 2; grid-row: 1; }
+.direction-button.left { grid-column: 1; grid-row: 2; }
+.direction-button.right { grid-column: 3; grid-row: 2; }
+.direction-button.down { grid-column: 2; grid-row: 3; }
+
+.action-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    backdrop-filter: blur(5px);
+}
+
+.action-button {
+    width: min(15vw, 80px);
+    height: min(15vw, 80px);
+    background: rgba(0, 255, 0, 0.1);
+    border: var(--neon-border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(14px, 3vw, 20px);
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--button-glow);
+    position: relative;
+    overflow: hidden;
+}
+
+.action-button::after {
+    content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    padding: 10px;
+    bottom: 0;
+    background: radial-gradient(circle at center, 
+        rgba(0, 255, 0, 0.2) 0%, 
+        transparent 70%);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.action-button:active::after {
+    opacity: 1;
+}
+
+.action-button:active {
+    transform: scale(0.95);
+    box-shadow: 0 0 20px var(--primary-color);
+}
+
+/* شريط الحالة */
+#game-hud {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: clamp(10px, 2vw, 20px);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -157,25 +280,26 @@ body {
         transparent
     );
     z-index: 100;
-    font-size: 0.9rem;
 }
 
 .hud-item {
     background: rgba(0, 16, 0, 0.8);
-    padding: 5px 10px;
-    border-radius: 8px;
-    border: 1px solid var(--primary-color);
+    padding: clamp(5px, 1vw, 10px) clamp(10px, 2vw, 20px);
+    border-radius: 10px;
+    border: var(--neon-border);
+    font-size: clamp(12px, 2vw, 16px);
+    box-shadow: var(--button-glow);
+    backdrop-filter: blur(5px);
 }
 
 #health-bar {
-    width: 80px;
+    width: clamp(80px, 15vw, 150px);
     height: 8px;
     background: var(--bg-darker);
-    border: 1px solid var(--primary-color);
-    border-radius: 5px;
+    border: var(--neon-border);
+    border-radius: 4px;
     overflow: hidden;
-    display: inline-block;
-    margin-right: 0.5rem;
+    box-shadow: var(--button-glow);
 }
 
 #health-bar::before {
@@ -183,64 +307,39 @@ body {
     display: block;
     height: 100%;
     width: 100%;
-    background: var(--primary-color);
-    transition: width var(--transition-speed);
-}
-
-/* منطقة اللعب */
-#game-area {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    background: radial-gradient(
-        circle at center,
-        var(--bg-dark),
-        var(--bg-darker)
+    background: linear-gradient(90deg, 
+        var(--primary-dark), 
+        var(--primary-color)
     );
-}
-
-/* الشخصية */
-.character {
-    position: absolute;
-    width: 40px;
-    height: 60px;
-    transition: transform var(--transition-speed);
-}
-
-#player {
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 60"><path fill="%2300ff00" d="M20 0l20 30-20 30L0 30z"/></svg>');
-    filter: drop-shadow(0 0 10px var(--shadow-color));
-}
-
-#player.hidden {
-    opacity: 0.5;
-    filter: drop-shadow(0 0 20px var(--shadow-color));
+    transition: width var(--transition-speed);
 }
 
 /* المخزون */
 #inventory {
-    position: absolute;
-    left: 10px;
+    position: fixed;
+    left: clamp(10px, 2vw, 20px);
     top: 50%;
     transform: translateY(-50%);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: clamp(8px, 1.5vw, 15px);
     z-index: 100;
 }
 
 .tool-slot {
-    width: 45px;
-    height: 45px;
+    width: min(12vw, 60px);
+    height: min(12vw, 60px);
     background: rgba(0, 16, 0, 0.8);
-    border: 2px solid var(--primary-color);
+    border: var(--neon-border);
     border-radius: 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
-    font-size: 1.2rem;
+    font-size: clamp(16px, 3vw, 24px);
+    box-shadow: var(--button-glow);
+    backdrop-filter: blur(5px);
 }
 
 .tool-icon {
@@ -253,14 +352,15 @@ body {
     right: -5px;
     background: var(--primary-color);
     color: var(--text-dark);
-    width: 18px;
-    height: 18px;
+    width: clamp(16px, 3vw, 20px);
+    height: clamp(16px, 3vw, 20px);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.7rem;
+    font-size: clamp(10px, 2vw, 14px);
     font-weight: bold;
+    box-shadow: var(--button-glow);
 }
 
 /* أسهم إرشادية */
@@ -286,72 +386,6 @@ body {
 @keyframes bounce {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-10px); }
-}
-
-/* أزرار التحكم المحمول */
-.mobile-controls {
-    position: absolute;
-    bottom: 20px;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: space-between;
-    padding: 20px;
-    z-index: 1000;
-}
-
-.direction-buttons {
-    display: grid;
-    grid-template-columns: repeat(3, 45px);
-    grid-template-rows: repeat(3, 45px);
-    gap: 5px;
-}
-
-.direction-button {
-    background: rgba(0, 255, 0, 0.2);
-    border: 2px solid var(--primary-color);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    color: var(--primary-color);
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.direction-button:active {
-    background: var(--primary-color);
-    color: var(--bg-dark);
-}
-
-.direction-button.up { grid-column: 2; grid-row: 1; }
-.direction-button.left { grid-column: 1; grid-row: 2; }
-.direction-button.right { grid-column: 3; grid-row: 2; }
-.direction-button.down { grid-column: 2; grid-row: 3; }
-
-.action-buttons {
-    display: flex;
-    gap: 10px;
-}
-
-.action-button {
-    width: 70px;
-    height: 70px;
-    background: rgba(0, 255, 0, 0.2);
-    border: 2px solid var(--primary-color);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    color: var(--primary-color);
-    cursor: pointer;
-}
-
-.action-button:active {
-    background: var(--primary-color);
-    color: var(--bg-dark);
 }
 
 /* التعليمات */
@@ -442,6 +476,31 @@ select {
     .modal-content {
         padding: 1.5rem;
         margin: 1rem;
+    }
+
+    .mobile-controls {
+        padding: 10px;
+    }
+
+    .direction-buttons {
+        width: 35vw;
+        height: 35vw;
+    }
+
+    .action-button {
+        width: 12vw;
+        height: 12vw;
+    }
+}
+
+@media (min-width: 1024px) {
+    .mobile-controls {
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+    }
+
+    .mobile-controls:hover {
+        opacity: 1;
     }
 }
 
